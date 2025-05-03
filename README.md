@@ -1,4 +1,6 @@
-# Project Setup (HotelHunt)
+# HotelHunt
+
+HotelHunt is a React-based web application designed to help users search for hotels efficiently. It features a responsive user interface built with Vite and styled using Tailwind CSS. The application allows users to filter hotels by name, view detailed hotel information, and browse through photo galleries. The project emphasizes performance optimization with debounced search functionality and state management using React's `useState` and `useEffect` hooks.
 
 ## Creating a React App using Vite
 
@@ -26,7 +28,9 @@ npm install tailwindcss @tailwindcss/vite
 
 # Implementing searching to fetch hotel list
 
-- Data is fetched by an event handler function with a fetch API whenever the user insert a new letter to perform filtering.
+## Implementing Searching to Fetch Hotel List
+
+Data is fetched using an event handler function that utilizes the Fetch API. The function is optimized with debouncing to minimize unnecessary API calls and improve performance.
 
 ---
 

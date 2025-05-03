@@ -1,32 +1,38 @@
 import { useNavigate } from "react-router";
+import { searchHotels } from "../services/APIHotels";
+import { useEffect, useRef } from "react";
+
 function SearchBar({ setHotels, setIsLoading, setErrMsg }) {
 	const navigate = useNavigate();
-	async function handleSearch(e) {
+	const timeoutRef = useRef(null);
+
+	// Clear the timeout when the component unmounts to avoid memory leaks
+	useEffect(() => {
+		return () => {
+			if (timeoutRef.current) clearTimeout(timeoutRef.current);
+		};
+	}, []);
+
+	function handleSearch(e) {
 		const searchQuery = e.target.value.trim();
 
-		if (!searchQuery) {
-			setHotels([]);
-			return;
-		}
+		// Clear previous timeout and error
+		if (timeoutRef.current) clearTimeout(timeoutRef.current);
+		setErrMsg("");
 
-		try {
-			setIsLoading(true);
-			setErrMsg("");
-
-			const res = await fetch(`https://hotels.expotb.com/api/searchHotels?search=${encodeURIComponent(searchQuery)}`);
-			if (!res.ok) throw new Error(`Something went wrong with fetching hotels!`);
-
-			const results = await res.json();
-
-			if (!results.data || results.data.length === 0) throw new Error("No hotels found!");
-
-			setHotels(results.data);
-		} catch (error) {
-			setErrMsg(error.message);
-			setHotels([]);
-		} finally {
-			setIsLoading(false);
-		}
+		// Won't send till user stops typing for 300ms (each keystroke will reset the timeout)
+		timeoutRef.current = setTimeout(async () => {
+			try {
+				setIsLoading(true);
+				const results = await searchHotels(searchQuery);
+				setHotels(results);
+			} catch (error) {
+				setErrMsg(error.message);
+				setHotels([]);
+			} finally {
+				setIsLoading(false);
+			}
+		}, 300);
 	}
 
 	return (
@@ -44,10 +50,10 @@ function SearchBar({ setHotels, setIsLoading, setErrMsg }) {
 				name="query"
 				id="query"
 				className="p-2.5 ml-8 w-full block border-none outline-none"
-				placeholder="Search by hotel name..."
+				placeholder="Hotel name..."
 				aria-label="Search hotels"
 			/>
-			<span className="absolute left-3 cursor-pointer" role="button" onClick={() => navigate("/")}>
+			<span className="absolute left-3" aria-hidden="true">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
 					<circle cx="11" cy="11" r="8" />
 					<path d="M21 21l-4.35-4.35" />

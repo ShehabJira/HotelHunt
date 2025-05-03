@@ -3,6 +3,7 @@ import DOMPurify from "dompurify"; // DOMPurify => removes any harmful scripts o
 import parse from "html-react-parser"; // It allows to safely render raw HTML inside your React components
 import PhotoGallery from "../components/PhotoGallery";
 import { useEffect, useState } from "react";
+import { getHotelDetails } from "../services/APIHotels";
 
 function HotelDetailsPage() {
 	const [hotel, setHotel] = useState({});
@@ -17,14 +18,8 @@ function HotelDetailsPage() {
 				try {
 					setIsLoading(true);
 					setErrMsg("");
-
-					const res = await fetch(`https://hotels.expotb.com/api/displayHotel/${id}`);
-					if (!res.ok) throw new Error(`Something went wrong with fetching hotel!`);
-
-					const results = await res.json();
-
-					if (!results.data._id) throw new Error("No hotel found!");
-					setHotel(results.data);
+					const data = await getHotelDetails(id);
+					setHotel(data);
 				} catch (error) {
 					setErrMsg(error.message);
 					setHotel([]);

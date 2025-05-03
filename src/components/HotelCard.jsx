@@ -1,15 +1,18 @@
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 function HotelCard({ hotel }) {
 	const navigate = useNavigate();
+	const [imgSrc, setImgSrc] = useState(hotel.photos[0]);
 
 	return (
 		<div className="bg-white rounded-xl overflow-hidden flex flex-col justify-between">
 			<div>
 				<div className="overflow-hidden rounded-xl mb-2">
 					<img
-						src={hotel.photos[0]}
-						alt="Hotel"
+						src={imgSrc}
+						alt={hotel.name}
+						onError={() => setImgSrc("/No-Image-Placeholder.svg")}
 						className="overflow-hidden aspect-square object-cover transform transition-transform duration-300 hover:scale-105"
 					/>
 				</div>

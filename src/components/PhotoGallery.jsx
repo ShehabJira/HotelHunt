@@ -4,12 +4,19 @@ const arrow = `absolute top-0 w-12 h-full text-center bg-[hsl(210 17% 98% / 65%)
 
 function PhotoGallery({ photos }) {
 	const [current, setCurrent] = useState(0);
+	const [src, setSrc] = useState(photos[current]);
 
 	function handleIncrease() {
-		if (current < photos.length - 1) setCurrent((cur) => cur + 1);
+		if (current < photos.length - 1) {
+			setCurrent((cur) => cur + 1);
+			setSrc(photos[current + 1]);
+		}
 	}
 	function handleDecrease() {
-		if (current >= 1) setCurrent((cur) => cur - 1);
+		if (current >= 1) {
+			setCurrent((cur) => cur - 1);
+			setSrc(photos[current - 1]);
+		}
 	}
 
 	return (
@@ -29,7 +36,15 @@ function PhotoGallery({ photos }) {
 					<path d="M15 18l-6-6 6-6" />
 				</svg>
 			</span>
-			<img src={photos[current]} alt="Hotel" style={{ aspectRatio: "3/2" }} className="w-full object-cover" />
+			<img
+				src={src}
+				onError={() => {
+					setSrc("/No-Image-Placeholder-Wide.jpg");
+				}}
+				alt="Hotel"
+				style={{ aspectRatio: "3/2" }}
+				className="w-full object-cover"
+			/>
 			<span className={`${arrow} right-0 ${current === photos.length - 1 ? "cursor-not-allowed" : "cursor-pointer"} `} onClick={handleIncrease}>
 				<svg
 					width="24"
